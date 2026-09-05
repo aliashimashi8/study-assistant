@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>کمک‌یار نهم | GPT-5.6</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Tahoma, Arial, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      margin-top: 0;
+      font-size: 30px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .status {
+      padding: 12px;
+      border-radius: 12px;
+      background: #eef2f7;
+      margin-bottom: 18px;
+      text-align: center;
+    }
+
+    .success {
+      background: #e9f8ef;
+      color: #18794e;
+    }
+
+    .error {
+      background: #fff0f0;
+      color: #b42318;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .full {
+      grid-column: 1 / -1;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #d8deea;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #ff7a00;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 12px;
+      padding: 14px;
+      background: #ff7a00;
+      color: #fff;
+      font-family: inherit;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #e96d00;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .answer {
+      white-space: pre-wrap;
+      line-height: 2;
+      background: #f8f9fc;
+      padding: 18px;
+      border-radius: 14px;
+      min-height: 100px;
+    }
+
+    .loading {
+      text-align: center;
+    }
+
+    @media (max-width: 650px) {
+      .container {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full {
+        grid-column: auto;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+
+      <h1>🤖 کمک‌یار نهم</h1>
+
+      <div id="status" class="status">
+        در حال بررسی اتصال به سرور...
+      </div>
+
+      <div class="grid">
+
+        <div>
+          <label for="subject">درس</label>
+
+          <select id="subject">
+            <option>ریاضی</option>
+            <option>علوم</option>
+            <option>فارسی</option>
+            <option>نگارش</option>
+            <option>عربی</option>
+            <option>انگلیسی</option>
+            <option>مطالعات اجتماعی</option>
+            <option>دینی</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="mode">حالت پاسخ</label>
+
+          <select id="mode">
+            <option value="آموزشی">
+              آموزشی و مرحله‌به‌مرحله
+            </option>
+
+            <option value="کوتاه">
+              کوتاه و مستقیم
+            </option>
+
+            <option value="امتحانی">
+              مثل پاسخ امتحان
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label for="book">نام کتاب</label>
+
+          <input
+            id="book"
+            type="text"
+            placeholder="مثلاً ریاضی نهم"
+          >
+        </div>
+
+        <div>
+          <label for="teacher">روش تدریس</label>
+
+          <input
+            id="teacher"
+            type="text"
+            placeholder="مثلاً ساده و مرحله‌به‌مرحله"
+          >
+        </div>
+
+        <div class="full">
+
+          <label for="question">
+            سؤال شما
+          </label>
+
+          <textarea
+            id="question"
+            placeholder="سؤالت را اینجا بنویس..."
+          ></textarea>
+
+        </div>
+
+      </div>
+
+      <br>
+
+      <button id="send">
+        ارسال سؤال 🚀
+      </button>
+
+    </div>
+
+
+    <div class="card">
+
+      <h2>📚 پاسخ کمک‌یار</h2>
+
+      <div id="answer" class="answer">
+        هنوز سؤالی ارسال نشده.
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /*
+    ==========================================
+    آدرس واقعی سرور Render
+    ==========================================
+    */
+
+    const API_BASE =
+      "https://study-assistance-server.onrender.com";
+
+
+    /*
+    ==========================================
+    دسترسی به عناصر صفحه
+    ==========================================
+    */
+
+    function $(id) {
+      return document.getElementById(id);
+    }
+
+
+    /*
+    ==========================================
+    بررسی اتصال سرور
+    ==========================================
+    */
+
+    async function checkServer() {
+
+      try {
+
+        const response =
+          await fetch(API_BASE + "/");
+
+        if (!response.ok) {
+          throw new Error("سرور پاسخ نداد");
+        }
+
+        $("status").textContent =
+          "سرور متصل است ✅";
+
+        $("status").className =
+          "status success";
+
+      } catch (error) {
+
+        $("status").textContent =
+          "سرور وصل نیست ❌";
+
+        $("status").className =
+          "status error";
+
+        console.error(error);
+      }
+    }
+
+
+    /*
+    ==========================================
+    ارسال سؤال
+    ==========================================
+    */
+
+    $("send").addEventListener(
+      "click",
+      async function () {
+
+        const question =
+          $("question").value.trim();
+
+
+        if (!question) {
+
+          $("answer").textContent =
+            "اول سؤالت را بنویس.";
+
+          return;
+        }
+
+
+        $("send").disabled = true;
+
+        $("answer").className =
+          "answer loading";
+
+        $("answer").textContent =
+          "در حال فکر کردن... ⏳";
+
+
+        /*
+        ======================================
+        ساخت پیام برای هوش مصنوعی
+        ======================================
+        */
+
+        const message = `
+
+تو «کمک‌یار نهم» هستی؛
+یک دستیار آموزشی برای دانش‌آموز پایه نهم.
+
+درس:
+${$("subject").value}
+
+حالت پاسخ:
+${$("mode").value}
+
+نام کتاب:
+${$("book").value || "مشخص نشده"}
+
+روش تدریس:
+${$("teacher").value || "ساده و مرحله‌به‌مرحله"}
+
+سؤال دانش‌آموز:
+${question}
+
+
+قوانین پاسخ:
+
+1. پاسخ را به زبان فارسی بده.
+
+2. پاسخ برای دانش‌آموز پایه نهم مناسب باشد.
+
+3. اگر سؤال ریاضی یا علمی بود،
+مراحل حل را واضح توضیح بده.
+
+4. اگر حالت آموزشی است،
+مرحله‌به‌مرحله آموزش بده.
+
+5. اگر حالت کوتاه است،
+کوتاه و مستقیم جواب بده.
+
+6. اگر حالت امتحانی است،
+پاسخ مرتب و مناسب نوشتن در برگه امتحان بده.
+
+7. اگر اطلاعات سؤال کافی نیست،
+حدس نزن و بگو چه اطلاعاتی لازم است.
+
+8. توضیحات غیرضروری نده.
+
+`;
+
+
+        try {
+
+          /*
+          ====================================
+          ارسال به Render
+          ====================================
+          */
+
+          const response =
+            await fetch(
+              API_BASE + "/api/chat",
+              {
+                method: "POST",
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body: JSON.stringify({
+                  message: message
+                })
+              }
+            );
+
+
+          /*
+          ====================================
+          دریافت پاسخ
+          ====================================
+          */
+
+          const data =
+            await response.json();
+
+
+          /*
+          ====================================
+          بررسی خطا
+          ====================================
+          */
+
+          if (!response.ok) {
+
+            throw new Error(
+              data.error ||
+              "خطایی در سرور رخ داد."
+            );
+          }
+
+
+          /*
+          ====================================
+          نمایش جواب
+          ====================================
+          */
+
+          $("answer").className =
+            "answer";
+
+          $("answer").textContent =
+            data.answer ||
+            "پاسخی دریافت نشد.";
+
+
+        } catch (error) {
+
+          console.error(error);
+
+          $("answer").className =
+            "answer error";
+
+          $("answer").textContent =
+            "❌ خطا:\n" +
+            error.message;
+
+
+        } finally {
+
+          $("send").disabled =
+            false;
+        }
+
+      }
+    );
+
+
+    /*
+    ==========================================
+    اجرای بررسی اتصال
+    ==========================================
+    */
+
+    checkServer();
+
+  </script>
+
+</body>
+
+</html>l
